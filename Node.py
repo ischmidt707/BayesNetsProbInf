@@ -5,6 +5,6 @@ class Node():
         self.name = name
         self.possValues = []
         self.value = ""
-        self.parents = {}
-        self.children = {}
+        self.parents = []
+        self.children = []
         self.CPD = {}
