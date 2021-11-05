@@ -12,6 +12,7 @@ class Network():
         self.factors = {}
         self.name = filename[:-4]
         self.loadBNet(filename)
+        self.popChildren()
 
     # method to load network from a .BIF file
     def loadBNet(self, filename):
@@ -34,7 +35,8 @@ class Network():
             if sep[0] == "probability":  # start to populate CPD
                 cur = self.nodes[sep[2]]
                 for i in range(4, len(sep) - 2):
-                    cur.parents.append(sep[i])
+                    par = sep[i].replace(',', '')
+                    cur.parents.append(par)
                 num = len(cur.parents)
                 broken = False
                 while not broken:
@@ -68,7 +70,12 @@ class Network():
                             cur.CPD[valkey].append(val)
         # in theory this should be all we need to import everything
         # somehow make factors list for variable elimination? idk how tf that works
-        # add children addition (can be done as after all this easily)
+
+    def popChildren(self):
+        for node in self.nodes.values():
+            for i in node.parents:
+                self.nodes[i].children.append(node.name)
+
 
 
 if __name__ == "__main__":
@@ -76,4 +83,5 @@ if __name__ == "__main__":
     for node in testnet.nodes.values():
         print(node.name)
         print(node.parents)
+        print(node.children)
         print(node.CPD)
