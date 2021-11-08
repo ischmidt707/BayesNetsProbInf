@@ -20,7 +20,7 @@ class Network():
         for line in file:
             sep = line.split(" ")
             if sep[0] == "variable":  # start process of assigning new node
-                self.nodes[sep[1]] = Node(sep[1])
+                self.nodes[sep[1]] = Node(sep[1])  # the keys in self.nodes are the variable names
                 nline = file.readline()  # move to next line to read in possible values
                 nextsplit = nline.split(" ")
                 try:
