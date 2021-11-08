@@ -17,8 +17,10 @@ class VarElim():
     def isHidden(self, var):
         return var != self.X and var not in self.e
 
-    def sumOut(self):
-        pass
+    def sumOut(self, var):
+        for f in self.factors:
+            if var in f.vars:
+                pass
 
     def pwProd(self):
         pass
@@ -92,7 +94,10 @@ class VarElim():
                         var.used = True
                         break
 
-            #if(var.used):
+            if(var.used):
+                self.makeFactor(var)
+                if(self.isHidden((var))):
+                    self.sumOut(var)
 
 
         return self.result
