@@ -43,10 +43,13 @@ class VarElim():
 
     def makeFactor(self, var):
         variables = []
-        if(var not in self.e):  # probably delete this if statement
+        if(var not in self.e):
             variables.append(var)
         for p in var.parents:
             variables.append(p)
+
+        if(var in self.e):
+            
         self.factors.append(Factor(variables))
 
 
