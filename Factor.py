@@ -1,5 +1,5 @@
 class Factor():
 
-    def __init__(self, vars, matrix):
+    def __init__(self, vars, truTable):
         self.vars = vars
-        self.matrix = matrix
+        self.truTable = truTable

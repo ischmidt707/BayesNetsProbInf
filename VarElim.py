@@ -42,18 +42,47 @@ class VarElim():
                     q.put_nowait(c)
 
     def makeFactor(self, var):
-        variables = []
-        if(var not in self.e):
-            variables.append(var)
+        variables = []  # will create a factor with list of dependent variables and a truth table
+        truTable = {}
+
+        tableDims = []
+        rows = 1
+
+        variables.append(var)
         for p in var.parents:
             variables.append(p)
 
-        if(var in self.e):
-            
-        self.factors.append(Factor(variables))
+        for v in variables:
+            if v.value == "":
+                tableDims.append(len(v.possValues))
+                rows = rows * len(v.possValues)
+            else: tableDims.append(1)
+
+        counters = []
+        for v in tableDims:
+            counters.append(0)
+        for row in range(rows):
+            rowKey = []
+            for v in range(len(counters)):
+                rowKey.append(variables[v].possValues[counters[v]])
+            tuple(rowKey)
+            truTable[rowKey] = var.CPD[rowKey]
+
+            if(row == rows-1):  # that was the last row, so exit loop
+                break
+
+            i = -1
+            counters[i] += 1  # keep track of truth table values via a list of counters
+            while(counters[i] == tableDims[i]):
+                counters[i] = 0
+                i -= 1
+                counters[i] += 1
+
+        self.factors.append(Factor(variables, truTable))
 
 
     def solve(self):
+        self.orderTopo()
         for var in reversed(self.order):  # We will use a reverse topological ordering
             if(not self.isHidden(var)):  # make sure the node is relevant (query, evidence, or ancestor)
                 var.used = True
@@ -63,7 +92,7 @@ class VarElim():
                         var.used = True
                         break
 
-            if(var.used):
+            #if(var.used):
 
 
         return self.result
