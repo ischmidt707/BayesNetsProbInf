@@ -22,8 +22,15 @@ class VarElim():
             if var in f.vars:
                 pass
 
-    def pwProd(self):
-        pass
+    def pwProd(self, f1, f2):
+        variables = []
+        for v in f1.vars:
+            variables.append(v)
+        for v in f2.vars:
+            if v not in variables:
+                variables.append(v)
+
+
 
     def orderTopo(self):
         q = Queue(0)
