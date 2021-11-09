@@ -10,7 +10,7 @@ class Main():
 
     def main(self):
         aNet = Network("alarm.bif")
-        a1 = VarElim(HYPOVOLEMIA, [], aNet)
+        a1 = VarElim("HYPOVOLEMIA", [], aNet)
         a1.solve()
 
 

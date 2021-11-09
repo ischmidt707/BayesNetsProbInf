@@ -7,12 +7,12 @@ from Factor import *
 class VarElim():
 
     def __init__(self, query, evidence, net):
-        self.X = query
         self.e = evidence
         self.net = net
         self.result = 0
         self.order = []
         self.factors = []
+        self.X = self.getNode(query)
 
         self.net.loadEvidence(self.e)
 
@@ -63,7 +63,7 @@ class VarElim():
             rowKey = []
             for v in range(len(counters)):
                 rowKey.append(variables[v].possValues[counters[v]])
-            tuple(rowKey)
+            rowKey = tuple(rowKey)
             newTruTable[rowKey] = []
 
             if (row == rows - 1):  # that was the last row, so exit loop
@@ -118,7 +118,7 @@ class VarElim():
             rowKey = []
             for v in range(len(counters)):
                 rowKey.append(variables[v].possValues[counters[v]])
-            tuple(rowKey)
+            rowKey = tuple(rowKey)
             newTruTable[rowKey] = []
 
             if(row == rows-1):  # that was the last row, so exit loop
@@ -150,10 +150,10 @@ class VarElim():
         q = Queue(0)
         vis = 0  # count of visited nodes
 
-        for var in self.net.nodes.values():
-            var.inDeg = len(var.parents)
-            if(var.inDeg == 0):
-                q.put_nowait(var)
+        for var in self.net.nodes:
+            self.getNode(var).inDeg = len(self.getNode(var).parents)
+            if(self.getNode(var).inDeg == 0):
+                q.put_nowait(self.getNode(var))
 
         while not q.empty():
             cur = q.get_nowait()
@@ -162,7 +162,7 @@ class VarElim():
             for c in cur.children:
                 self.getNode(c).inDeg -= 1
                 if(self.getNode(c).inDeg == 0):
-                    q.put_nowait(c)
+                    q.put_nowait(self.getNode(c))
 
     def makeFactor(self, var):
         variables = []  # will create a factor with list of dependent variables and a truth table
@@ -188,8 +188,11 @@ class VarElim():
             rowKey = []
             for v in range(len(counters)):
                 rowKey.append(variables[v].possValues[counters[v]])
-            tuple(rowKey)
-            truTable[rowKey] = var.CPD[rowKey]
+            rowKey = tuple(rowKey)
+            if next(iter(var.CPD)) == 'always':
+                truTable[rowKey] = var.CPD['always']
+            else:
+                truTable[rowKey] = var.CPD[rowKey]
 
             if(row == rows-1):  # that was the last row, so exit loop
                 break
@@ -232,7 +235,7 @@ class VarElim():
             evidenceOut = evidenceOut + v[0] + ": " + v[1] + " "
         print("Evidence:")
         print(evidenceOut)
-        for key, value in tempFactor.truTable:
-            prob = str(key) + ": " + str(value) + "%"
+        for key in tempFactor.truTable:
+            prob = str(key) + ": " + str(tempFactor.truTable[key]) + "%"
             print(prob)
         #return self.result
