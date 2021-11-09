@@ -26,46 +26,54 @@ class VarElim():
             else:
                 newFactors.append(f)
 
-        for f in vFactors:
-            variables = []
-            for v in f.vars:
-                if(v.name != var.name):
-                    variables.append(v)
+        if(len(vFactors) == 0):  # No need to sum out var
+            return
 
-            # Generate a new empty truth table
-            newTruTable = {}
-            tableDims = []
+        tempFactor = vFactors[0]
+        if(len(vFactors) > 1):  # Calculate Point-Wise product of all factors to be summed out
+            for f in vFactors[1:]:
+                tempFactor = self.pwProd(tempFactor, f)
 
-            for v in variables:
-                if v.value == "":
-                    tableDims.append(len(v.possValues))
-                    rows = rows * len(v.possValues)
-                else:
-                    tableDims.append(1)
 
-            counters = []
-            for v in tableDims:
-                counters.append(0)
-            for row in range(rows):
-                rowKey = []
-                for v in range(len(counters)):
-                    rowKey.append(variables[v].possValues[counters[v]])
-                tuple(rowKey)
-                newTruTable[rowKey] = []
+        # Generate new truth table
+        variables = []
+        for v in tempFactor.vars:
+            if(v.name != var.name):
+                variables.append(v)
 
-                if (row == rows - 1):  # that was the last row, so exit loop
-                    break
+        newTruTable = {}
+        tableDims = []
 
-                i = -1
-                counters[i] += 1  # keep track of truth table values via a list of counters
-                while (counters[i] == tableDims[i]):
-                    counters[i] = 0
-                    i -= 1
-                    counters[i] += 1
+        for v in variables:
+            if v.value == "":
+                tableDims.append(len(v.possValues))
+                rows = rows * len(v.possValues)
+            else:
+                tableDims.append(1)
+
+        counters = []
+        for v in tableDims:
+            counters.append(0)
+        for row in range(rows):
+            rowKey = []
+            for v in range(len(counters)):
+                rowKey.append(variables[v].possValues[counters[v]])
+            tuple(rowKey)
+            newTruTable[rowKey] = []
+
+            if (row == rows - 1):  # that was the last row, so exit loop
+                break
+
+            i = -1
+            counters[i] += 1  # keep track of truth table values via a list of counters
+            while (counters[i] == tableDims[i]):
+                counters[i] = 0
+                i -= 1
+                counters[i] += 1
 
             # Fill out values of new truth table, as list items to be added
             for key in newTruTable:
-                for oldKey, oldValue in f.truTable:
+                for oldKey, oldValue in tempFactor.truTable:
                     if all(v in oldKey for v in key):
                         newTruTable[key].append(oldValue)
 
@@ -206,6 +214,8 @@ class VarElim():
                 self.makeFactor(var)
                 if(self.isHidden((var))):
                     self.sumOut(var)
+
+
 
 
         return self.result
