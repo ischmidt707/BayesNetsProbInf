@@ -16,6 +16,10 @@ class VarElim():
 
         self.net.loadEvidence(self.e)
 
+        self.e = []
+        for l in evidence:
+            self.e.append(self.getNode(l[0]))
+
     def getNode(self, name):
         return self.net.nodes[name]
 

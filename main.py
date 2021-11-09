@@ -13,6 +13,8 @@ class Main():
         a1 = VarElim("HYPOVOLEMIA", [], aNet)
         a1.solve()
 
+        a2 = VarElim("HYPOVOLEMIA", [['HRBP','LOW'],['CO','LOW'],['BP','HIGH']], aNet)
+
 
 main = Main()
 main.main()
