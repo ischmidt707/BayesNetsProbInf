@@ -215,6 +215,11 @@ class VarElim():
                 if(self.isHidden((var))):
                     self.sumOut(var)
 
+        tempFactor = self.factors[0]
+        if (len(self.factors) > 1):  # Calculate Point-Wise product of all remaining factors
+            for f in self.factors[1:]:
+                tempFactor = self.pwProd(tempFactor, f)
+        tempFactor.normalize()
 
 
 
