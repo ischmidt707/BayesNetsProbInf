@@ -14,6 +14,11 @@ class VarElim():
         self.order = []
         self.factors = []
 
+        self.net.loadEvidence(self.e)
+
+    def getNode(self, name):
+        return self.net.nodes[name]
+
     def isHidden(self, var):
         return var != self.X and var not in self.e
 
@@ -155,8 +160,8 @@ class VarElim():
             self.order.append(cur)
             vis += 1
             for c in cur.children:
-                c.inDeg -= 1
-                if(c.inDeg == 0):
+                self.getNode(c).inDeg -= 1
+                if(self.getNode(c).inDeg == 0):
                     q.put_nowait(c)
 
     def makeFactor(self, var):
@@ -168,7 +173,7 @@ class VarElim():
 
         variables.append(var)
         for p in var.parents:
-            variables.append(p)
+            variables.append(self.getNode(p))
 
         for v in variables:
             if v.value == "":
@@ -206,7 +211,7 @@ class VarElim():
                 var.used = True
             else:
                 for c in var.children:
-                    if(c.used):
+                    if(self.getNode(c).used):
                         var.used = True
                         break
 
@@ -222,5 +227,12 @@ class VarElim():
         tempFactor.normalize()
 
 
-
-        return self.result
+        evidenceOut = ""
+        for v in self.e:
+            evidenceOut = evidenceOut + v[0] + ": " + v[1] + " "
+        print("Evidence:")
+        print(evidenceOut)
+        for key, value in tempFactor.truTable:
+            prob = str(key) + ": " + str(value) + "%"
+            print(prob)
+        #return self.result

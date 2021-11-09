@@ -76,6 +76,10 @@ class Network():
             for i in node.parents:
                 self.nodes[i].children.append(node.name)
 
+    def loadEvidence(self, evidence):
+        for n in evidence:
+            self.nodes[n[0]].value = n[1]
+
 
 
 if __name__ == "__main__":

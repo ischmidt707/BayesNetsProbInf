@@ -9,7 +9,9 @@ class Main():
         self.result = [] # store tuples of network name, query node name, algorithm name, evidence tag, & resulting marginal distributions for each trial run
 
     def main(self):
-        pass
+        aNet = Network("alarm.bif")
+        a1 = VarElim(HYPOVOLEMIA, [], aNet)
+        a1.solve()
 
 
 main = Main()
