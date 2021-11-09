@@ -169,6 +169,8 @@ class VarElim():
                     q.put_nowait(self.getNode(c))
 
     def makeFactor(self, var):
+        print(var.name)
+        print(var.CPD)
         variables = []  # will create a factor with list of dependent variables and a truth table
         truTable = {}
 
