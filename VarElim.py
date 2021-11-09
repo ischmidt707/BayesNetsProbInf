@@ -18,9 +18,65 @@ class VarElim():
         return var != self.X and var not in self.e
 
     def sumOut(self, var):
+        newFactors = []  # This will eventually replace self.factors
+        vFactors = []  # List of factors that need summing out
         for f in self.factors:
             if var in f.vars:
-                pass
+                vFactors.append(f)
+            else:
+                newFactors.append(f)
+
+        for f in vFactors:
+            variables = []
+            for v in f.vars:
+                if(v.name != var.name):
+                    variables.append(v)
+
+            # Generate a new empty truth table
+            newTruTable = {}
+            tableDims = []
+
+            for v in variables:
+                if v.value == "":
+                    tableDims.append(len(v.possValues))
+                    rows = rows * len(v.possValues)
+                else:
+                    tableDims.append(1)
+
+            counters = []
+            for v in tableDims:
+                counters.append(0)
+            for row in range(rows):
+                rowKey = []
+                for v in range(len(counters)):
+                    rowKey.append(variables[v].possValues[counters[v]])
+                tuple(rowKey)
+                newTruTable[rowKey] = []
+
+                if (row == rows - 1):  # that was the last row, so exit loop
+                    break
+
+                i = -1
+                counters[i] += 1  # keep track of truth table values via a list of counters
+                while (counters[i] == tableDims[i]):
+                    counters[i] = 0
+                    i -= 1
+                    counters[i] += 1
+
+            # Fill out values of new truth table, as list items to be added
+            for key in newTruTable:
+                for oldKey, oldValue in f.truTable:
+                    if all(v in oldKey for v in key):
+                        newTruTable[key].append(oldValue)
+
+                # Sum list items together to get the new values
+                sumOf = 0
+                for val in newTruTable[key]:
+                    sumOf = sumOf + val
+                newTruTable[key] = sumOf
+            newFactors.append(Factor(variables, newTruTable))  # Add new summed out factor into factors
+
+        self.factors = newFactors  # Replace old list of factors with new list
 
     def pwProd(self, f1, f2):
 
@@ -61,18 +117,19 @@ class VarElim():
                 counters[i] = 0
                 i -= 1
                 counters[i] += 1
+        # ^ Done creating empty valued truth table ^
 
-            # Fill out values of new truth table, as list items
-            for key in newTruTable:
-                for oldKey, oldValue in {**f1.truTable, **f2.truTable}:  # iterate through both Factor's tables
-                    if all(v in key for v in oldKey):
-                        newTruTable[key].append(oldValue)
+        # Fill out values of new truth table, as list items
+        for key in newTruTable:
+            for oldKey, oldValue in {**f1.truTable, **f2.truTable}:  # iterate through both Factor's tables
+                if all(v in key for v in oldKey):
+                    newTruTable[key].append(oldValue)
 
-                # Multiply list items together to get the new values
-                prod = 1
-                for val in newTruTable[key]:
-                    prod = prod * val
-                newTruTable[key] = prod
+            # Multiply list items together to get the new values
+            prod = 1
+            for val in newTruTable[key]:
+                prod = prod * val
+            newTruTable[key] = prod
 
 
 
