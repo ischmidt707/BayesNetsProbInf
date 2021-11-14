@@ -43,7 +43,6 @@ class VarElim():
             for f in vFactors[1:]:
                 tempFactor = self.pwProd(tempFactor, f)
 
-
         # Generate new truth table
         variables = []
         for v in tempFactor.vars:
@@ -52,6 +51,7 @@ class VarElim():
 
         newTruTable = {}
         tableDims = []
+        rows = 1
 
         for v in variables:
             if v.value == "":
@@ -81,8 +81,11 @@ class VarElim():
                 counters[i] += 1
 
             # Fill out values of new truth table, as list items to be added
+            print("new t table")
+            print(var.name)
+            print(newTruTable)
             for key in newTruTable:
-                for oldKey, oldValue in tempFactor.truTable:
+                for oldKey, oldValue in tempFactor.truTable.items():
                     if all(v in oldKey for v in key):
                         newTruTable[key].append(oldValue)
 
@@ -108,6 +111,7 @@ class VarElim():
         # Generate a new empty truth table
         newTruTable = {}
         tableDims = []
+        rows = 1
 
         for v in variables:
             if v.value == "":
@@ -148,6 +152,8 @@ class VarElim():
                 prod = prod * val
             newTruTable[key] = prod
 
+        return Factor(variables, newTruTable)
+
 
 
     def orderTopo(self):
@@ -177,7 +183,7 @@ class VarElim():
         tableDims = []
         rows = 1
 
-        variables.append(var)
+        #variables.append(var)
         for p in var.parents:
             variables.append(self.getNode(p))
 
@@ -214,7 +220,12 @@ class VarElim():
 
 
     def solve(self):
+        """
         self.orderTopo()
+        for n in self.order:
+            print(n.name)
+        return
+        """
         for var in reversed(self.order):  # We will use a reverse topological ordering
             if(not self.isHidden(var)):  # make sure the node is relevant (query, evidence, or ancestor)
                 var.used = True

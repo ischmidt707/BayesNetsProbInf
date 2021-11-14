@@ -61,6 +61,7 @@ class Network():
                         for i in range(num):
                             var = probline[i].replace("(", '')
                             var = var.replace(")", '')
+                            var = var.replace(",", '')  # CPD fix by Isaac
                             valkey.append(var)
                         valkey = tuple(valkey)  # apparently cant use lists as dict keys so convert to tuple
                         cur.CPD[valkey] = []
