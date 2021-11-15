@@ -220,8 +220,8 @@ class VarElim():
 
 
     def solve(self):
-        """
         self.orderTopo()
+        """
         for n in self.order:
             print(n.name)
         return
