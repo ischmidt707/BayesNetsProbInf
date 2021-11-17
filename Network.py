@@ -70,7 +70,6 @@ class Network():
                             val = float(val.replace(";\n", ''))  # this is not good coding
                             cur.CPD[valkey].append(val)
         # in theory this should be all we need to import everything
-        # somehow make factors list for variable elimination? idk how tf that works
 
     def popChildren(self):
         for node in self.nodes.values():
