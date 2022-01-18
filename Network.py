@@ -51,7 +51,7 @@ class Network():
                         cur.CPD["always"] = []
                         for i in range(1, len(probline)):
                             val = probline[i].replace(",", '')
-                            val = float(val.replace(";\n", ''))  # this is not good coding
+                            val = float(val.replace(";\n", ''))
                             cur.CPD[("always")].append(val)
                         broken = True
                     elif probline[0] == "}\n":  # reaches end of list of values so break
@@ -61,13 +61,13 @@ class Network():
                         for i in range(num):
                             var = probline[i].replace("(", '')
                             var = var.replace(")", '')
-                            var = var.replace(",", '')  # CPD fix by Isaac
+                            var = var.replace(",", '')
                             valkey.append(var)
                         valkey = tuple(valkey)  # apparently cant use lists as dict keys so convert to tuple
                         cur.CPD[valkey] = []
                         for i in range(num, len(probline)):
                             val = probline[i].replace(",", '')
-                            val = float(val.replace(";\n", ''))  # this is not good coding
+                            val = float(val.replace(";\n", ''))
                             cur.CPD[valkey].append(val)
         # in theory this should be all we need to import everything
 
